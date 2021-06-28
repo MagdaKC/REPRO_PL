@@ -1,0 +1,64 @@
+#!/bin/ksh
+#
+
+${SCR_DBG}set -vx
+set -vx
+
+#   TURN_EMT_v72_DR
+
+#             CASE to be either null, "WEEKLY", "MONTHLY", etc
+#             MODE to be either DR or EMT or EMT2DR, depending on what you turn for
+
+SCR_NAME=TURN_EMT_v72_DR
+SCR_PARM=1
+SCR_LIST="infile SV ITR VER GTR CASE MODE PROJ SUBSOL DELETE INSERT"
+SCR_VERS=040219.0
+
+
+if [ `expr $#` -lt $SCR_PARM ]; then
+   echo "Usage: $SCR_NAME ${SCR_LIST}\007"
+   exit 101
+fi
+
+DateTime=`date '+DATE: %m/%d/%y  TIME: %H:%M:%S'`
+
+echo " # "
+echo " #  $SCR_NAME $* "
+echo " # "
+echo " #  Version $SCR_VERS "
+echo " # "
+echo " #  Run Date $DateTime "
+echo " # "
+RUN_YEAR=$1
+MAIN_PATH=/nobackup/mkuzmicz/
+DISK=/nobackup/mkuzmicz/REPRO
+DSK_OLD=/nobackup/mkuzmicz/SSEM
+SNX_VER_OLD=230
+SNX_VER=72
+export SNX_VER MAIN_PATH DISK DSK_OLD SNX_VER_OLD
+while read A1 A2 A3 A4 A5 A6 A7 A8 A9 A10 A11 A12
+do
+
+cd /nobackup/mkuzmicz/tmp/magda
+#echo "$A5 $A6 $A7 $A8"    > $MAIN_PATH/INFILES/ARC_SETUP_NEW.${CASE}_$ARC
+#echo "$A9 $A10 $A11 $A12" > $MAIN_PATH/INFILES/ARC_SETUP_NXT.${CASE}_$ARC
+#read OYEAR ODOY Date_OLD_ARC OLD < $MAIN_PATH/INFILES/ARC_SETUP_OLD.${CASE}_$ARC
+#read NYEAR NDOY Date_NEW_ARC ARC < $MAIN_PATH/INFILES/ARC_SETUP_NEW.${CASE}_$ARC
+#read XYEAR XDOY Date_NXT_ARC NXT < $MAIN_PATH/INFILES/ARC_SETUP_NXT.${CASE}_$ARC
+CASE=WEEK
+NEW_ARC=$A8
+NYEAR=$A5
+YR=`echo $NYEAR | cut -c3-4 `
+
+echo $NEW_ARC $YR > $MAIN_PATH/INFILES/CURRENT_ARC_DR.${CASE}_${NEW_ARC}
+/nobackup/mkuzmicz/scripts/REPRO/TURN_SLR_ALL_v400_v2 CURRENT_ARC_DR.${CASE}_${NEW_ARC} L1 0 wv230x 3 WEEKLY EMT2DR . . OUT NONE > o.TUR_L1EMT_DRv400 2>&1
+/nobackup/mkuzmicz/scripts/REPRO/TURN_SLR_ALL_v400_v2 CURRENT_ARC_DR.${CASE}_${NEW_ARC} L2 0 wv230x 3 WEEKLY EMT2DR . . OUT NONE > o.TUR_L2EMT_DRv400 2>&1
+/nobackup/mkuzmicz/scripts/REPRO/TURN_SLR_ALL_v400_v2 CURRENT_ARC_DR.${CASE}_${NEW_ARC} E1 0 wv230x 3 WEEKLY EMT2DR . . OUT NONE > o.TUR_E1EMT_DRv400 2>&1
+/nobackup/mkuzmicz/scripts/REPRO/TURN_SLR_ALL_v400_v2 CURRENT_ARC_DR.${CASE}_${NEW_ARC} E2 0 wv230x 3 WEEKLY EMT2DR . . OUT NONE > o.TUR_E2EMT_DRv400 2>&1
+
+
+#exit  0
+done < /nobackup/mkuzmicz/INFILES/START-STOP_DATES/RR_${RUN_YEAR}
+
+
+exit 0

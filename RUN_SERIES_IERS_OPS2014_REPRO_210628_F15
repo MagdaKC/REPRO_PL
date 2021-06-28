@@ -96,7 +96,7 @@ if [ "$CASE" = "FORTNTLY" ]; then
   LVER=wv400  
   TYPE_DR=DRFC
   TYPE_EMTmid=EMTF_midC
-  TYPE_EMT=EMTF
+  TYPE_EMT=EMTFC
   WEIGHT=100
   WEIGHT=
 

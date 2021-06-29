@@ -6,7 +6,7 @@ set -vx
 
 #   TURN_EMT_v72_DR
 
-#             CASE to be either null, "WEEKLY", "MONTHLY", etc
+#             CASE to be either null, "FORTNTLY", "MONTHLY", etc
 #             MODE to be either DR or EMT or EMT2DR, depending on what you turn for
 
 SCR_NAME=TURN_EMT_v72_DR
@@ -51,13 +51,13 @@ NYEAR=$A5
 YR=`echo $NYEAR | cut -c3-4 `
 
 echo $NEW_ARC $YR > $MAIN_PATH/INFILES/CURRENT_ARC_DR.${CASE}_${NEW_ARC}
-/nobackup/mkuzmicz/scripts/REPRO/TURN_SLR_ALL_v400_v2 CURRENT_ARC_DR.${CASE}_${NEW_ARC} L1 0 wv230x 3 WEEKLY EMT2DR . . OUT NONE > o.TUR_L1EMT_DRv400 2>&1
-/nobackup/mkuzmicz/scripts/REPRO/TURN_SLR_ALL_v400_v2 CURRENT_ARC_DR.${CASE}_${NEW_ARC} L2 0 wv230x 3 WEEKLY EMT2DR . . OUT NONE > o.TUR_L2EMT_DRv400 2>&1
-/nobackup/mkuzmicz/scripts/REPRO/TURN_SLR_ALL_v400_v2 CURRENT_ARC_DR.${CASE}_${NEW_ARC} E1 0 wv230x 3 WEEKLY EMT2DR . . OUT NONE > o.TUR_E1EMT_DRv400 2>&1
-/nobackup/mkuzmicz/scripts/REPRO/TURN_SLR_ALL_v400_v2 CURRENT_ARC_DR.${CASE}_${NEW_ARC} E2 0 wv230x 3 WEEKLY EMT2DR . . OUT NONE > o.TUR_E2EMT_DRv400 2>&1
+/nobackup/mkuzmicz/scripts/REPRO/TURN_SLR_ALL_v400_v2 CURRENT_ARC_DR.${CASE}_${NEW_ARC} L1 0 wv230x 3 FORTNTLY EMT2DR . . OUT NONE > o.TUR_L1EMT_DRv400 2>&1
+#/nobackup/mkuzmicz/scripts/REPRO/TURN_SLR_ALL_v400_v2 CURRENT_ARC_DR.${CASE}_${NEW_ARC} L2 0 wv230x 3 FORTNTLY EMT2DR . . OUT NONE > o.TUR_L2EMT_DRv400 2>&1
+#/nobackup/mkuzmicz/scripts/REPRO/TURN_SLR_ALL_v400_v2 CURRENT_ARC_DR.${CASE}_${NEW_ARC} E1 0 wv230x 3 FORTNTLY EMT2DR . . OUT NONE > o.TUR_E1EMT_DRv400 2>&1
+#/nobackup/mkuzmicz/scripts/REPRO/TURN_SLR_ALL_v400_v2 CURRENT_ARC_DR.${CASE}_${NEW_ARC} E2 0 wv230x 3 FORTNTLY EMT2DR . . OUT NONE > o.TUR_E2EMT_DRv400 2>&1
 
 
-#exit  0
+exit  0
 done < /nobackup/mkuzmicz/INFILES/START-STOP_DATES/RR_${RUN_YEAR}
 
 

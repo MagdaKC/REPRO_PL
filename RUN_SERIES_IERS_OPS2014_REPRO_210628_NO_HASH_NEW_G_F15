@@ -7,7 +7,7 @@ set -xv
 
 #
 
-SCR_NAME=RUN_SERIES_IERS_OPS2014_PP_BIAS_v230_062019_RUN
+SCR_NAME=RUN_SERIES_IERS_OPS2014_REPRO_210628_NO_HASH_NEW_G_F15
 SCR_PARM=6
 SCR_LIST="CASE ETA_IN GROUP JOB_FILE RUN_NUMBER RUN_YEAR MDLS"
 SCR_VERS=210628.0
@@ -34,7 +34,7 @@ echo " # "
 
 
 CASE=${1:-FORTNTLY}
-#ETA_IN=${2:-YES}
+ETA_IN=${2:-YES}
 GROUP=${3:-REANAL14}
 JOB_FILE=${4:-}
 RUN_NUMBER=$5
@@ -94,410 +94,29 @@ RUN_FILE=${JOB_FILE}.${EFFORT}.$GROUP
 
 
 
-if [ "$CASE" = "WEEKLY" ]; then
-
-  ARC_LEN=8
-  ARC_LEN=7
-  DELTA=7
-  ACCEL_NUM_L=2
-  ACCEL_NUM_E=1
-  LVER=wv230  
-  TYPE_DR=DRWC
-  TYPE_EMT=EMTWC
-  WEIGHT=100
-  WEIGHT=
-
-#runs 2018-03-21
-  SNX_VER=221
-
-#runs 2019-03-24
-  SNX_VER=231
-#NEW GEODYN 091919
-#  SNX_VER=232
-
-
-#if [ "$SNX_VER" = "221" ]; then
-#runs 2021-01-15
-  SNX_VER=230
-
-#  ATTENTION:    Is this right for these series?
-
-if [ "$SNX_VER" = "230" ]; then
-
-  BIAS=7
-
-fi
-if [ "$SNX_VER" = "232" ]; then
-
-  BIAS=7
-
-fi
-
-export SNX_VER BIAS
-
-
-#  GRAV_TOP=GRAVTOP_CSR_2014_15d      #   for the 15-day arcs  !!!
-#  GRAV_TOP=GRAVTOP_CSR_2014_7d       #   for the  7-day arcs  !!!
-
-#GRAV_TOP=GRACE/7d_ARCS_2018.01.11/FOR_GEODYN_USERS_ONLY_2018.01.11/GRAVTOP_CSR_2017.10.11+JGF_2017.09.24-2021.0.v2018.01.13
-
-#GRAV_TOP=GRACE/7d_ARCS_2018.01.11/FOR_GEODYN_USERS_ONLY_2018.02.15/GRAVTOP_CSR_2017.10.11+JGF_2017.09.24-2021.0.v2018.02.15
-  
-#GRAV_TOP=GRAVTOP_CSR_2019.01.16_d      #   This is good up to the 2018.12.23 arc, we will need the JCF file for arcs beyond that!
-#GRAV_TOP=GRAVTOP_CSR_2019.06.17_d      # 190621
-#GRAV_TOP=GRAVTOP_CSR_2019.11.01+JGF_2019.11.03-2021.12.30_d      # 190104
-#20210209
-#GRAV_TOP=GRAVTOP_CSR_2019.11.01+JGF_2019.04.03-2021.12.30_d_210208
-#20210220
- GRAV_TOP=GRAVTOP_CSR_2019.11.01+JGF_2019.04.03-2021.12.30_d.2021.02.20
-
-
-# GRAVITY_MDL=GGM05C_3.1-120x120
-# GRAVITY_MDL=GGM05S_3.1-30.30
-
-# GRAVITY_MDL=GGM05C-GRAVTOP_120x120
-  GRAVITY_MDL=GGM05C-GRAVTOP_30x30
-
-
-#GRVTIM=GRVTIM_2014_CSR_J2+J3+J4+J5+J6
-
-#20190401
-# GRVTIM=GRVTIM_2019_CSR_2011+J2+J3+J4+J5+J6
-
-# GRVTIM=JCET_CSR20181211_GSM+GAC.7d/JCET_6x6
-
-#20210209
-  GRVTIM=JCET210208_CSR20201115_GSM+GAC_12x12
-
-
-
-  export GRAVITY_MDL GRVTIM GRAV_TOP  
-
-
-  if [ "$TSTN" = "TNM00" ]; then
-
-    ETIDE_MDL=etides+poletide.fxd
-    OTIDE_MDL=GOT47/20otides_got4.7.fxd
-    HFEOP_MDL=di+semidiurnal_tidal_EOP_2008
-    HFCOM_MDL=di+semidiurnal_tidal_COM_GOT4.7
-    OLOAD_MDL=SLR_OLOAD_080520_got4.7.gdyn
-
-  elif [ "$TSTN" = "TNM01" ]; then
-
-    ETIDE_MDL=TIDES+etides_RAY_2018.fxd
-
-    OTIDE_MDL=GOT47/20otides_got4.7.fxd
-    HFEOP_MDL=di+semidiurnal_tidal_EOP_2008
-    HFCOM_MDL=di+semidiurnal_tidal_COM_GOT4.7
-    OLOAD_MDL=SLR_OLOAD_080520_got4.7.gdyn
-
-  elif [ "$TSTN" = "TNM02" ]; then
-
-    ETIDE_MDL=TIDES+etides_RAY_2018.fxd
-    OTIDE_MDL=GOT4.10/20otides_got4p10c+Air_Tides_got4.7.fxd
-
-    HFEOP_MDL=di+semidiurnal_tidal_EOP_2008
-    HFCOM_MDL=di+semidiurnal_tidal_COM_GOT4.7
-    OLOAD_MDL=SLR_OLOAD_080520_got4.7.gdyn
-
-  elif [ "$TSTN" = "TNM03" ]; then
-
-    ETIDE_MDL=TIDES+etides_RAY_2018.fxd
-    OTIDE_MDL=GOT4.10/20otides_got4p10c+Air_Tides_got4.7.fxd
-    HFEOP_MDL=di+semidiurnal_tidal_EOP_2018
-
-    HFCOM_MDL=di+semidiurnal_tidal_COM_GOT4.7
-    OLOAD_MDL=SLR_OLOAD_080520_got4.7.gdyn
-
-  elif [ "$TSTN" = "TNM04" ]; then
-
-    ETIDE_MDL=TIDES+etides_RAY_2018.fxd
-    OTIDE_MDL=GOT4.10/20otides_got4p10c+Air_Tides_got4.7.fxd
-    HFEOP_MDL=di+semidiurnal_tidal_EOP_2018
-    HFCOM_MDL=di+semidiurnal_tidal_COM_GOT4.10c
-
-    OLOAD_MDL=SLR_OLOAD_080520_got4.7.gdyn
-
-  elif [ "$TSTN" = "TNM05" ]; then
-
-    ETIDE_MDL=TIDES+etides_RAY_2018.fxd
-    OTIDE_MDL=GOT4.10/20otides_got4p10c+Air_Tides_got4.7.fxd
-    HFEOP_MDL=di+semidiurnal_tidal_EOP_2018
-    HFCOM_MDL=di+semidiurnal_tidal_COM_GOT4.10c
-    OLOAD_MDL=SLR_OLOAD_180118_207NSTA_GOT4.10c.gdyn
-
-  elif [ "$TSTN" = "TNM06" ]; then
-
-    ETIDE_MDL=etides+poletide.fxd
-    OTIDE_MDL=GOT4.10/20otides_got4p10c+Air_Tides_got4.7.fxd
-    HFEOP_MDL=di+semidiurnal_tidal_EOP_2008
-    HFCOM_MDL=di+semidiurnal_tidal_COM_GOT4.7
-    OLOAD_MDL=SLR_OLOAD_080520_got4.7.gdyn
-
-  elif [ "$TSTN" = "TNM07" ]; then
-
-    ETIDE_MDL=etides+poletide.fxd
-    OTIDE_MDL=GOT47/20otides_got4.7.fxd
-    HFEOP_MDL=di+semidiurnal_tidal_EOP_2018
-    HFCOM_MDL=di+semidiurnal_tidal_COM_GOT4.7
-    OLOAD_MDL=SLR_OLOAD_080520_got4.7.gdyn
-
-  elif [ "$TSTN" = "TNM08" ]; then
-
-    ETIDE_MDL=etides+poletide.fxd
-    OTIDE_MDL=GOT47/20otides_got4.7.fxd
-    HFEOP_MDL=di+semidiurnal_tidal_EOP_2008
-    HFCOM_MDL=di+semidiurnal_tidal_COM_GOT4.10c
-    OLOAD_MDL=SLR_OLOAD_080520_got4.7.gdyn
-
-  elif [ "$TSTN" = "TNM09" ]; then
-
-    ETIDE_MDL=etides+poletide.fxd
-    OTIDE_MDL=GOT47/20otides_got4.7.fxd
-    HFEOP_MDL=di+semidiurnal_tidal_EOP_2008
-    HFCOM_MDL=di+semidiurnal_tidal_COM_GOT4.7
-    OLOAD_MDL=SLR_OLOAD_180118_207NSTA_GOT4.10c.gdyn
-
-  elif [ "$TSTN" = "HFEOP00" ]; then
-
-    ETIDE_MDL=TIDES+etides_RAY_2018.fxd
-    OTIDE_MDL=GOT4.10/20otides_got4p10c+Air_Tides_got4.7.fxd
-    OLOAD_MDL=SLR_OLOAD_180118_207NSTA_GOT4.10c.gdyn
-    HFCOM_MDL=HFCOM/HFCOM_GOT4.10c
-
-    HFEOP_MDL=HFEOP/HFEOP_GSFCiers2018
-
-  elif [ "$TSTN" = "HFEOP01" ]; then
-
-    ETIDE_MDL=TIDES+etides_RAY_2018.fxd
-    OTIDE_MDL=GOT4.10/20otides_got4p10c+Air_Tides_got4.7.fxd
-    OLOAD_MDL=SLR_OLOAD_180118_207NSTA_GOT4.10c.gdyn
-    HFCOM_MDL=HFCOM/HFCOM_GOT4.10c
-
-    HFEOP_MDL=HFEOP/HFEOP_DESAI
-
-  elif [ "$TSTN" = "HFEOP02" ]; then
-
-    ETIDE_MDL=TIDES+etides_RAY_2018.fxd
-    OTIDE_MDL=GOT4.10/20otides_got4p10c+Air_Tides_got4.7.fxd
-    OLOAD_MDL=SLR_OLOAD_180118_207NSTA_GOT4.10c.gdyn
-    HFCOM_MDL=HFCOM/HFCOM_GOT4.10c
-
-    HFEOP_MDL=HFEOP/HFEOP_EOT11A
-
-  elif [ "$TSTN" = "HFEOP03" ]; then
-
-    ETIDE_MDL=TIDES+etides_RAY_2018.fxd
-    OTIDE_MDL=GOT4.10/20otides_got4p10c+Air_Tides_got4.7.fxd
-    OLOAD_MDL=SLR_OLOAD_180118_207NSTA_GOT4.10c.gdyn
-    HFCOM_MDL=HFCOM/HFCOM_GOT4.10c
-
-    HFEOP_MDL=HFEOP/HFEOP_FES2012
-
-  elif [ "$TSTN" = "HFEOP04" ]; then
-
-    ETIDE_MDL=TIDES+etides_RAY_2018.fxd
-    OTIDE_MDL=GOT4.10/20otides_got4p10c+Air_Tides_got4.7.fxd
-    OLOAD_MDL=SLR_OLOAD_180118_207NSTA_GOT4.10c.gdyn
-    HFCOM_MDL=HFCOM/HFCOM_GOT4.10c
-
-    HFEOP_MDL=HFEOP/HFEOP_GIPSON
-
-  elif [ "$TSTN" = "HFEOP05" ]; then
-
-    ETIDE_MDL=TIDES+etides_RAY_2018.fxd
-    OTIDE_MDL=GOT4.10/20otides_got4p10c+Air_Tides_got4.7.fxd
-    OLOAD_MDL=SLR_OLOAD_180118_207NSTA_GOT4.10c.gdyn
-    HFCOM_MDL=HFCOM/HFCOM_GOT4.10c
-
-    HFEOP_MDL=HFEOP/HFEOP_GIPSON-L
-
-  elif [ "$TSTN" = "HFEOP06" ]; then
-
-    ETIDE_MDL=TIDES+etides_RAY_2018.fxd
-    OTIDE_MDL=GOT4.10/20otides_got4p10c+Air_Tides_got4.7.fxd
-    OLOAD_MDL=SLR_OLOAD_180118_207NSTA_GOT4.10c.gdyn
-    HFCOM_MDL=HFCOM/HFCOM_GOT4.10c
-
-    HFEOP_MDL=HFEOP/HFEOP_HAMTIDE
-
-  elif [ "$TSTN" = "HFEOP07" ]; then
-
-    ETIDE_MDL=TIDES+etides_RAY_2018.fxd
-    OTIDE_MDL=GOT4.10/20otides_got4p10c+Air_Tides_got4.7.fxd
-    OLOAD_MDL=SLR_OLOAD_180118_207NSTA_GOT4.10c.gdyn
-    HFCOM_MDL=HFCOM/HFCOM_GOT4.10c
-
-    HFEOP_MDL=HFEOP/HFEOP_IERS2010
-
-  elif [ "$TSTN" = "HFEOP08" ]; then
-
-    ETIDE_MDL=TIDES+etides_RAY_2018.fxd
-    OTIDE_MDL=GOT4.10/20otides_got4p10c+Air_Tides_got4.7.fxd
-    OLOAD_MDL=SLR_OLOAD_180118_207NSTA_GOT4.10c.gdyn
-    HFCOM_MDL=HFCOM/HFCOM_GOT4.10c
-
-    HFEOP_MDL=HFEOP/HFEOP_MAZDAK
-
-  elif [ "$TSTN" = "HFEOP09" ]; then
-
-    ETIDE_MDL=TIDES+etides_RAY_2018.fxd
-    OTIDE_MDL=GOT4.10/20otides_got4p10c+Air_Tides_got4.7.fxd
-    OLOAD_MDL=SLR_OLOAD_180118_207NSTA_GOT4.10c.gdyn
-    HFCOM_MDL=HFCOM/HFCOM_GOT4.10c
-
-    HFEOP_MDL=HFEOP/HFEOP_VLBI
-
-  elif [ "$TSTN" = "HFEOP10" ]; then
-
-    ETIDE_MDL=TIDES+etides_RAY_2018.fxd
-    OTIDE_MDL=GOT4.10/20otides_got4p10c+Air_Tides_got4.7.fxd
-    OLOAD_MDL=SLR_OLOAD_180118_207NSTA_GOT4.10c.gdyn
-    HFCOM_MDL=HFCOM/HFCOM_GOT4.10c
-
-    HFEOP_MDL=HFEOP/HFEOP_VLBI+GPS
-
-  elif [ "$TSTN" = "HFEOP11" ]; then
-
-    #ETIDE_MDL=TIDES+etides_RAY_2018.fxd
-    ETIDE_MDL=TIDES+etides_RAY_2018
-    #OTIDE_MDL=GOT4.10/20otides_got4p10c+Air_Tides_got4.7.fxd
-    OTIDE_MDL=GOT4.10/20otides_got4p10c+Air_Tides_got4.7
-    OLOAD_MDL=SLR_OLOAD_180118_207NSTA_GOT4.10c.gdyn
-    HFCOM_MDL=HFCOM/HFCOM_GOT4.10c
-
-    HFEOP_MDL=HFEOP/HFEOP_DESAIwLib
-
-  elif [ "$TSTN" = "HFEOP12" ]; then
-
-    ETIDE_MDL=TIDES+etides_RAY_2018.fxd
-    OTIDE_MDL=GOT4.10/20otides_got4p10c+Air_Tides_got4.7.fxd
-    OLOAD_MDL=SLR_OLOAD_180118_207NSTA_GOT4.10c.gdyn
-    HFCOM_MDL=HFCOM/HFCOM_GOT4.10c
-
-    HFEOP_MDL=HFEOP/HFEOP_EOT11AwLib
-
-  elif [ "$TSTN" = "HFEOP13" ]; then
-
-    ETIDE_MDL=TIDES+etides_RAY_2018.fxd
-    OTIDE_MDL=GOT4.10/20otides_got4p10c+Air_Tides_got4.7.fxd
-    OLOAD_MDL=SLR_OLOAD_180118_207NSTA_GOT4.10c.gdyn
-    HFCOM_MDL=HFCOM/HFCOM_GOT4.10c
-
-    HFEOP_MDL=HFEOP/HFEOP_FES2012wLib
-
-# elif [ "$TSTN" = "HFEOP14" ]; then
-
-#   ETIDE_MDL=TIDES+etides_RAY_2018.fxd
-#   OTIDE_MDL=GOT4.10/20otides_got4p10c+Air_Tides_got4.7.fxd
-#   OLOAD_MDL=SLR_OLOAD_180118_207NSTA_GOT4.10c.gdyn
-#   HFCOM_MDL=HFCOM/HFCOM_GOT4.10c
-
-#   HFEOP_MDL=HFEOP/HFEOP_  NONE
-
-  elif [ "$TSTN" = "HFEOP15" ]; then
-
-    ETIDE_MDL=TIDES+etides_RAY_2018.fxd
-    OTIDE_MDL=GOT4.10/20otides_got4p10c+Air_Tides_got4.7.fxd
-    OLOAD_MDL=SLR_OLOAD_180118_207NSTA_GOT4.10c.gdyn
-    HFCOM_MDL=HFCOM/HFCOM_GOT4.10c
-
-    HFEOP_MDL=HFEOP/HFEOP_GIPSON-LwLib
-
-  elif [ "$TSTN" = "HFEOP16" ]; then
-
-    ETIDE_MDL=TIDES+etides_RAY_2018.fxd
-    OTIDE_MDL=GOT4.10/20otides_got4p10c+Air_Tides_got4.7.fxd
-    OLOAD_MDL=SLR_OLOAD_180118_207NSTA_GOT4.10c.gdyn
-    HFCOM_MDL=HFCOM/HFCOM_GOT4.10c
-
-    HFEOP_MDL=HFEOP/HFEOP_HAMTIDEwLib
-
-  elif [ "$TSTN" = "HFEOP17" ]; then
-
-    ETIDE_MDL=TIDES+etides_RAY_2018.fxd
-    OTIDE_MDL=GOT4.10/20otides_got4p10c+Air_Tides_got4.7.fxd
-    OLOAD_MDL=SLR_OLOAD_180118_207NSTA_GOT4.10c.gdyn
-    HFCOM_MDL=HFCOM/HFCOM_GOT4.10c
-
-    HFEOP_MDL=HFEOP/HFEOP_IERS2010wLib
-
-  elif [ "$TSTN" = "HFEOP18" ]; then
-
-    ETIDE_MDL=TIDES+etides_RAY_2018.fxd
-    OTIDE_MDL=GOT4.10/20otides_got4p10c+Air_Tides_got4.7.fxd
-    OLOAD_MDL=SLR_OLOAD_180118_207NSTA_GOT4.10c.gdyn
-    HFCOM_MDL=HFCOM/HFCOM_GOT4.10c
-
-    HFEOP_MDL=HFEOP/HFEOP_MAZDAKwLib
-
-  elif [ "$TSTN" = "HFEOP19" ]; then
-
-    ETIDE_MDL=TIDES+etides_RAY_2018.fxd
-    OTIDE_MDL=GOT4.10/20otides_got4p10c+Air_Tides_got4.7.fxd
-    OLOAD_MDL=SLR_OLOAD_180118_207NSTA_GOT4.10c.gdyn
-    HFCOM_MDL=HFCOM/HFCOM_GOT4.10c
-
-    HFEOP_MDL=HFEOP/HFEOP_VLBIwLib
-
-  elif [ "$TSTN" = "HFEOP20" ]; then
-
-    ETIDE_MDL=TIDES+etides_RAY_2018.fxd
-    OTIDE_MDL=GOT4.10/20otides_got4p10c+Air_Tides_got4.7.fxd
-    OLOAD_MDL=SLR_OLOAD_180118_207NSTA_GOT4.10c.gdyn
-    HFCOM_MDL=HFCOM/HFCOM_GOT4.10c
-
-    HFEOP_MDL=HFEOP/HFEOP_VLBI+GPSwLib
-
-  elif [ "$TSTN" = "HFEOP21" ]; then
-
-    #ETIDE_MDL=TIDES+etides_RAY_2018.fxd
-    ETIDE_MDL=TIDES+etides_RAY_2018
-    #OTIDE_MDL=GOT4.10/20otides_got4p10c+Air_Tides_got4.7.fxd
-    OTIDE_MDL=GOT4.10/20otides_got4p10c+Air_Tides_got4.7
-    OLOAD_MDL=SLR_OLOAD_180118_207NSTA_GOT4.10c.gdyn
-    HFCOM_MDL=HFCOM/HFCOM_GOT4.10c
-
-    HFEOP_MDL=HFEOP/HFEOP_GIPSON_PM+VLBI+GPS_UT1wLib
-
-fi
-  export ETIDE_MDL OTIDE_MDL HFEOP_MDL HFCOM_MDL OLOAD_MDL
-
-
-  CURRENT_APLO=050210
-
-  export CURRENT_APLO
-
-  IERS_CPP_CENTER=JCT
-  IERS_CPP_TECHNQ=L
-  IERS_CPP_LENGTH=7
-  OUR_VERSION=30
-
-  export IERS_CPP_CENTER IERS_CPP_TECHNQ IERS_CPP_LENGTH OUR_VERSION
-
 
 #####
 #FORTNTLY
 #######
-elif [ "$CASE" = "FORTNTLY" ]; then
+if [ "$CASE" = "FORTNTLY" ]; then
 
   ARC_LEN=8
   ARC_LEN=15
   DELTA=15
   ACCEL_NUM_L=5
   ACCEL_NUM_E=1
-  LVER=wv230
+  LVER=wv400
   TYPE_DR=DRFC
   TYPE_EMT=EMTF
   TYPE_EMTmid=EMTF_midC
   WEIGHT=100
   WEIGHT=
 
-  SNX_VER=230
+  SNX_VER=400
 
 #  ATTENTION:    Is this right for these series?
 
-if [ "$SNX_VER" = "230" ]; then
+if [ "$SNX_VER" = "400" ]; then
 
   BIAS=7
 
@@ -856,34 +475,9 @@ fi
   OUR_VERSION=30
 
   export IERS_CPP_CENTER IERS_CPP_TECHNQ IERS_CPP_LENGTH OUR_VERSION
-elif [ "$CASE" = "MONTHLY" ]; then
-
-  ARC_LEN=28
-  DELTA=28
-  ACCEL_NUM_L=7
-  ACCEL_NUM_E=4
-  LVER=m
-  TYPE_DR=DRM
-  TYPE_EMT=EMTM
-
-  if [ "$MDLS" = "1810" ]; then
-
-    ETIDE_MDL=TIDES+etides_RAY_2018.fxd
-    OTIDE_MDL=GOT4.10/20otides_got4p10c+Air_Tides_got4.7.fxd
-    HFEOP_MDL=di+semidiurnal_tidal_EOP_2018
-    HFCOM_MDL=di+semidiurnal_tidal_COM_GOT4.10c
-    OLOAD_MDL=SLR_OLOAD_180118_207NSTA_GOT4.10c.gdyn
-  
-  fi
-
-  export ETIDE_MDL OTIDE_MDL HFEOP_MDL HFCOM_MDL OLOAD_MDL
-
-  CURRENT_APLO=050210
-
-  export CURRENT_APLO
 
 fi
-
+ echo "START"
 while read A1 A2 A3 A4 A5 A6 A7 A8 A9 A10 A11 A12
 do
 
@@ -1148,7 +742,7 @@ export PROC_STEP=L1_DR0
 #$SCRIPTS/TURN_SLR_ALL CURRENT_ARC_DR.$CASE $SVN 0 wCe $GTR $CASE EMT2DR14 . . $DELETE $INSERT > o.TURN_SLR_ALL_EMT2DR14.$CASE.$SVN 2>&1
 
 $SCRIPTS/$RUN_GDN_SLR_SCR $ARC ${LVER}0 $SAT $YY $TYPE_DR . > o.RUN_GDN_SLR_DR_0.$CASE.${SVN}_${LVER} 2>&1
-#exit 20210114
+exit 20210114
 $SCRIPTS/TURN_SLR_ALL CURRENT_ARC_DR.${CASE}_$ARC $SVN 0 ${LVER}0 $GTR $CASE DR . . $DELETE $INSERT > o.TURN_SLR_ALL_DR0.$CASE.$SVN 2>&1
 #
 #export PROC_STEP=L1_DR1
@@ -1324,7 +918,7 @@ $SCRIPTS/SUB_MAKE_SINEX ${SERVICE}_${SOL_EPP}_fnames.snx  PPV  $SERVICE $CASE $W
 
 L12_VERSION=` expr ${OUR_VERSION} + 10 `
 
-fi
+#fi
 
 $SCRIPTS/SUB_MAKE_SINEX ${SERVICE}_${SOL_LPP}_fnames.snx GISLV $SERVICE $CASE $WT > o.SUB_MAKE_SINEX_${SERVICE}_${SOL_LPP} 2>&1
 

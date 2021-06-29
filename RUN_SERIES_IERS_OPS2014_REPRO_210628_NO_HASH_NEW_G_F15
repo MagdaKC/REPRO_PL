@@ -33,8 +33,8 @@ echo " #  Run Date $DateTime "
 echo " # "
 
 
-CASE=${1:-WEEKLY}
-ETA_IN=${2:-YES}
+CASE=${1:-FORTNTLY}
+#ETA_IN=${2:-YES}
 GROUP=${3:-REANAL14}
 JOB_FILE=${4:-}
 RUN_NUMBER=$5
@@ -1157,30 +1157,6 @@ $SCRIPTS/TURN_SLR_ALL CURRENT_ARC_DR.${CASE}_$ARC $SVN 0 ${LVER}0 $GTR $CASE DR 
 $SCRIPTS/$RUN_GDN_SLR_SCR $ARC ${LVER}1 $SAT $YY $TYPE_DR . > o.RUN_GDN_SLR_DR_2.$CASE.$SVN 2>&1
 
 
-###exit 20190325
-##
-##
-###  LAGEOS 2 :
-##
-##SVN=L2
-##SAT=GISL2
-##
-##
-##export PROC_STEP=L2_DR0
-###$SCRIPTS/TURN_SLR_ALL CURRENT_ARC_DR.$CASE $SVN 0 wCe $GTR $CASE EMT2DR14 . . $DELETE $INSERT > o.TURN_SLR_ALL_EMT2DR14.$CASE.$SVN 2>&1
-##
-##$SCRIPTS/$RUN_GDN_SLR_SCR $ARC ${LVER}0 $SAT $YY $TYPE_DR . > o.RUN_GDN_SLR_DR_0.$CASE.${SVN}_${LVER} 2>&1
-##
-##$SCRIPTS/TURN_SLR_ALL CURRENT_ARC_DR.${CASE}_$ARC $SVN 0 ${LVER}0 $GTR $CASE DR . . $DELETE $INSERT > o.TURN_SLR_ALL_DR0.$CASE.$SVN 2>&1
-##
-##export PROC_STEP=L2_DR1
-##
-##$SCRIPTS/$RUN_GDN_SLR_SCR $ARC ${LVER}1 $SAT $YY $TYPE_DR . > o.RUN_GDN_SLR_DR_1.$CASE.$SVN 2>&1
-##
-#
-# Check data distribution, generate DELETEs if necessary and cut EMATs:
-#
-#                                                   Why do you use  3  here in the test script?
 $SCRIPTS/MERGE_DATA_CATALOGS $ARC $CASE DR GISL1 GISL2 GISLV ${LVER}1 $DISK > o.MERGE_DATA_CATALOGS_L12_DR 2>&1 
 $SCRIPTS/MAKE_SINEX_DATA_BLOCK $ARC GISLV $CASE DR $SERVICE ${LVER}1 "" $DISK > o.MAKE_SINEX_DATA_BLOCK_L12_DR 2>&1
 
@@ -1203,21 +1179,6 @@ export PROC_STEP=L1_EMTx
 $SCRIPTS/$RUN_GDN_SLR_SCR $ARC ${LVER}x $SAT $YY EMTF_midC . > o.RUN_GDN_SLR_EMT_x.$CASE.$SVN 2>&1
 
 $SCRIPTS/RMS_OF_FIT_SLR_ALL $ARC.${LVER}e $SVN $CASE EMT > o.RMS_OF_FIT_SLR_ALLe.$CASE.$SVN 2>&1
- exit 0
-SVN=L2
-SAT=GISL2
-
-$SCRIPTS/TURN_SLR_ALL CURRENT_ARC_EMT.${CASE}_$ARC $SVN 1 ${LVER}1 $GTR $CASE EMT . . IN $INSERT > o.TURN_SLR_ALL_EMTe.$CASE.$SVN 2>&1
-
-export PROC_STEP=L2_EMTe
-
-$SCRIPTS/$RUN_GDN_SLR_SCR $ARC ${LVER}e $SAT $YY $TYPE_EMT . > o.RUN_GDN_SLR_EMT_e.$CASE.$SVN 2>&1
-
-export PROC_STEP=L2_EMTx
-
-$SCRIPTS/$RUN_GDN_SLR_SCR $ARC ${LVER}x $SAT $YY EMTW_midC . > o.RUN_GDN_SLR_EMT_x.$CASE.$SVN 2>&1
-
-$SCRIPTS/RMS_OF_FIT_SLR_ALL $ARC.${LVER}e $SVN $CASE EMT > o.RMS_OF_FIT_SLR_ALLe.$CASE.$SVN 2>&1
 
 #
 # Generate final DATA BLOCK with the actual data (including the DELETEs) used in the EMATs:
@@ -1227,7 +1188,7 @@ SUBSFX=L12
 
 $SCRIPTS/MERGE_DATA_CATALOGS $ARC $CASE EMT GISL1 GISL2 GISLV ${LVER}e $DISK > o.MERGE_DATA_CATALOGS_L12_EMT 2>&1 
 $SCRIPTS/MAKE_SINEX_DATA_BLOCK $ARC GISLV $CASE EMT $SERVICE ${LVER}e $SUBSFX $DISK > o.MAKE_SINEX_DATA_BLOCK_L12_EMT 2>&1
-
+exit 0
 
 
 #
@@ -1236,18 +1197,20 @@ $SCRIPTS/MAKE_SINEX_DATA_BLOCK $ARC GISLV $CASE EMT $SERVICE ${LVER}e $SUBSFX $D
 
 /bin/sed -e "s/AAAAAA/$ARC/g" -e "s/DDDDDD/$Date_NEW_ARC/g" $MAIN_PATH/INFILES/L12emt_merge_list.tmplt > $MAIN_PATH/INFILES/L12emt_merge_list.$Date_NEW_ARC
 
-$SCRIPTS/SUB_MKCMAT_v220 LV 1.00 $YY $CASE . ${LVER}e L12emt_merge_list.$Date_NEW_ARC > o.SUB_MKCMAT_L12.$Date_NEW_ARC 2>&1
+$SCRIPTS/SUB_MKCMAT_v220 L1 1.00 $YY $CASE . ${LVER}e L12emt_merge_list.$Date_NEW_ARC > o.SUB_MKCMAT_L12.$Date_NEW_ARC 2>&1
 
-$SCRIPTS/SUB_MKCMAT_v220 LVx 1.00 $YY $CASE . ${LVER}x L12emt_merge_list.$Date_NEW_ARC > o.SUB_MKCMAT_L12x.$Date_NEW_ARC 2>&1
+$SCRIPTS/SUB_MKCMAT_v220 L1x 1.00 $YY $CASE . ${LVER}x L12emt_merge_list.$Date_NEW_ARC > o.SUB_MKCMAT_L12x.$Date_NEW_ARC 2>&1
 
 #exit 20190325
 #
 # At this point you can do a LAGEOS-only TRF solution (incremental)
 #
 
-CMAT_VERSION=10
+CMAT_VERSION=01
 LCMTV=$CMAT_VERSION
 LCMTVx=11
+LCMTVx=01
+
 
 export CMAT_VERSION LCMTV LCMTVx
 
@@ -1268,7 +1231,7 @@ export GLOBAL_CMAT_OLD CURRENT_CMAT_2_ADD SOL
 # At this point you can do a LAGEOS-only WEEKLY-TRF solution 
 #
 
-CMAT_VERSION=11
+CMAT_VERSION=01
 
 export CMAT_VERSION
 
@@ -1290,8 +1253,7 @@ $SCRIPTS/SUB_TRF_WEEKLY_PP_BIAS_L12 $SOL $CASE OPS . GISLV SOLVE_TRF_WEEKLY_2014
 #
 
 PSOL_NUM=1
-
-$SCRIPTS/POST_PROCESS $SOL $SERVICE GISLV $CASE L12 ${PSOL_NUM} ${SNX_VER} $Date_NEW_ARC $Date_NXT_ARC $Date_MID_ARC $ILRS_AC $WEIGHT > o.POST_PROCESS_L12_PP 2>&1  
+$SCRIPTS/POST_PROCESS_F15 $SOL $SERVICE GISLV $CASE L12 ${PSOL_NUM} ${SNX_VER} $Date_NEW_ARC $Date_NXT_ARC $Date_MID_ARC $ILRS_AC $WEIGHT > o.POST_PROCESS_L12_PP 2>&1  
 
 # Link the proper EPOCH BLOCK to this solution after removing any old links:
 
@@ -1304,7 +1266,8 @@ ln -s $EPOCH_DIR/${SERVICE}_${ARC}.${LVER}e_${WT}_$SUBSFX $EPOCH_DIR/${SERVICE}_
 # At this point you can do a LAGEOS-only Network Check and NEOS EOP solution:
 #
 
-CMAT_VERSION=11
+#CMAT_VERSION=11
+CMAT_VERSION=01
 
 export CMAT_VERSION
 
@@ -1347,340 +1310,6 @@ ln -s $EPOCH_DIR/${SERVICE}_${ARC}.${LVER}e_${WT}_$SUBSFX $EPOCH_DIR/${SERVICE}_
 
 
 
-#---------------------------------------------------
-
-
-#  Done with LAGEOS  1 & 2
-
-
-#---------------------------------------------------
-#+++++++++++++++++++++++++++++++++++++++++++++++++++
-#---------------------------------------------------
-
-
-
-#  Check if ETALON must be included:
-
-if [ "${ETA_IN}" = "YES" ]; then
-#
-
-
-#---------------------------------------------------
-
-
-#  Process ETALON  1 & 2
-
-
-#---------------------------------------------------
-
-
-
-
-#  ETALON 1 :
-
-SVN=E1
-SAT=ETA1
-
-
-export PROC_STEP=E1_DR0
-#$SCRIPTS/TURN_SLR_ALL CURRENT_ARC_DR.$CASE $SVN 0 wCe $GTR $CASE EMT2DR14 . . $DELETE $INSERT > o.TURN_SLR_ALL_EMT2DR14.$CASE.$SVN 2>&1
-
-$SCRIPTS/$RUN_GDN_SLR_SCR $ARC ${LVER}0 $SAT $YY $TYPE_DR . > o.RUN_GDN_SLR_DR_0.$CASE.$SVN 2>&1
-
-$SCRIPTS/TURN_SLR_ALL CURRENT_ARC_DR.${CASE}_$ARC $SVN 0 ${LVER}0 $GTR $CASE DR . . $DELETE $INSERT > o.TURN_SLR_ALL_DR0.$CASE.$SVN 2>&1
-
-export PROC_STEP=E1_DR1
-
-$SCRIPTS/$RUN_GDN_SLR_SCR $ARC ${LVER}1 $SAT $YY $TYPE_DR . > o.RUN_GDN_SLR_DR_1.$CASE.$SVN 2>&1
-
-
-
-#  ETALON 2 :
-
-SVN=E2
-SAT=ETA2
-
-
-export PROC_STEP=E2_DR0
-#$SCRIPTS/TURN_SLR_ALL CURRENT_ARC_DR.$CASE $SVN 0 wCe $GTR $CASE EMT2DR14 . . $DELETE $INSERT > o.TURN_SLR_ALL_EMT2DR14.$CASE.$SVN 2>&1
-
-$SCRIPTS/$RUN_GDN_SLR_SCR $ARC ${LVER}0 $SAT $YY $TYPE_DR . > o.RUN_GDN_SLR_DR_0.$CASE.$SVN 2>&1
-
-$SCRIPTS/TURN_SLR_ALL CURRENT_ARC_DR.${CASE}_$ARC $SVN 0 ${LVER}0 $GTR $CASE DR . . $DELETE $INSERT > o.TURN_SLR_ALL_DR0.$CASE.$SVN 2>&1
-
-export PROC_STEP=E2_DR1
-#
-$SCRIPTS/$RUN_GDN_SLR_SCR $ARC ${LVER}1 $SAT $YY $TYPE_DR . > o.RUN_GDN_SLR_DR_1.$CASE.$SVN 2>&1
-
-
-#
-# Check data distribution, generate DELETEs if necessary and cut EMATs:
-#
-
-SUBSFX=E12
-
-####NEW part 2013-03-15 mkc
-
-$SCRIPTS/MERGE_DATA_CATALOGS $ARC $CASE DR ETA1 ETA2 ETAV ${LVER}1 $DISK > o.MERGE_DATA_CATALOGS_E12_DR 2>&1
-$SCRIPTS/MERGE_DATA_CATALOGS $ARC $CASE DR GISLV ETAV PPV ${LVER}1 $DISK > o.MERGE_DATA_CATALOGS_L12+E12_DR 2>&1
-$SCRIPTS/MAKE_SINEX_DATA_BLOCK $ARC PPV $CASE DR $SERVICE ${LVER}1 $SUBSFX $DISK > o.MAKE_SINEX_DATA_BLOCK_L12+E12_DR  2>&1
-
-###OLD befor 2013
-#$SCRIPTS/MERGE_DATA_CATALOGS $ARC $CASE DR ETA1 ETA2 ETAV ${LVER}1 $DISK > o.MERGE_DATA_CATALOGS_E12_DR 2>&1 
-#$SCRIPTS/MAKE_SINEX_DATA_BLOCK $ARC ETAV $CASE DR $SERVICE ${LVER}1 $SUBSFX $DISK > o.MAKE_SINEX_DATA_BLOCK_E12_DR 2>&1
-
-#
-# For now, we will use the same DELETEs for LAGEOS & ETALON s/c, i.e. the LAGEOS-derived ones,
-# we therefore do NOT edit stations with too few ETALON data! However, we do use need to add
-# the ETALON data in the DATA BLOCK for the combined LAGEOS & ETALON SINEX files.
-#
-
-
-#
-# Generate the two ETALON Emats now:
-#
-
-SVN=E1
-SAT=ETA1
-
-$SCRIPTS/TURN_SLR_ALL CURRENT_ARC_EMT.${CASE}_$ARC $SVN 1 ${LVER}1 $GTR $CASE EMT . . IN $INSERT > o.TURN_SLR_ALL_EMTe.$CASE.$SVN 2>&1
-
-export PROC_STEP=E1_EMTe
-
-
-$SCRIPTS/$RUN_GDN_SLR_SCR $ARC ${LVER}e $SAT $YY $TYPE_EMT . > o.RUN_GDN_SLR_EMT_e.$CASE.$SVN 2>&1
-
-export PROC_STEP=E1_EMTx
-
-$SCRIPTS/$RUN_GDN_SLR_SCR $ARC ${LVER}x $SAT $YY EMTW_midC . > o.RUN_GDN_SLR_EMT_x.$CASE.$SVN 2>&1
-
-$SCRIPTS/RMS_OF_FIT_SLR_ALL $ARC.${LVER}e $SVN $CASE EMT > o.RMS_OF_FIT_SLR_ALLe.$CASE.$SVN 2>&1
-
-
-
-SVN=E2
-SAT=ETA2
-
-$SCRIPTS/TURN_SLR_ALL CURRENT_ARC_EMT.${CASE}_$ARC $SVN 1 ${LVER}1 $GTR $CASE EMT . . IN $INSERT > o.TURN_SLR_ALL_EMTe.$CASE.$SVN 2>&1
-
-export PROC_STEP=E2_EMTe
-
-$SCRIPTS/$RUN_GDN_SLR_SCR $ARC ${LVER}e $SAT $YY $TYPE_EMT . > o.RUN_GDN_SLR_EMT_e.$CASE.$SVN 2>&1
-
-export PROC_STEP=E2_EMTx
-
-$SCRIPTS/$RUN_GDN_SLR_SCR $ARC ${LVER}x $SAT $YY EMTW_midC . > o.RUN_GDN_SLR_EMT_x.$CASE.$SVN 2>&1
-
-$SCRIPTS/RMS_OF_FIT_SLR_ALL $ARC.${LVER}e $SVN $CASE EMT > o.RMS_OF_FIT_SLR_ALLe.$CASE.$SVN 2>&1
-
-
-#
-# Generate a combined data distribution catalog for the SINEX DATA BLOCK:
-#
-
-SUBSFX=LE12
-
-$SCRIPTS/MERGE_DATA_CATALOGS $ARC $CASE EMT ETA1 ETA2 ETAV ${LVER}e $DISK > o.MERGE_DATA_CATALOGS_E12_EMT 2>&1 
-
-
-$SCRIPTS/MERGE_DATA_CATALOGS $ARC $CASE EMT GISLV ETAV PPV ${LVER}e $DISK > o.MERGE_DATA_CATALOGS_L12+E12_EMT 2>&1 
-
-$SCRIPTS/MAKE_SINEX_DATA_BLOCK $ARC PPV $CASE EMT $SERVICE ${LVER}e $SUBSFX $DISK > o.MAKE_SINEX_DATA_BLOCK_L12+E12_EMT 2>&1
-
-
-
-#
-# Merge the two ETALON Emats now into a Cmat:
-#
-
-CMAT_VERSION=20
-ECMTV=$CMAT_VERSION
-ECMTVx=21
-
-export CMAT_VERSION ECMTV ECMTVx
-
-/bin/sed -e "s/AAAAAA/$ARC/g" -e "s/DDDDDD/$Date_NEW_ARC/g" $MAIN_PATH/INFILES/E12emt_merge_list.tmplt > $MAIN_PATH/INFILES/E12emt_merge_list.$Date_NEW_ARC
-
-
-$SCRIPTS/SUB_MKCMAT_v220 EV 1.00 $YY $CASE . ${LVER}e E12emt_merge_list.$Date_NEW_ARC > o.SUB_MKCMAT_v220_E12.$Date_NEW_ARC 2>&1
-#
-$SCRIPTS/SUB_MKCMAT_v220 EVx 1.00 $YY $CASE . ${LVER}x E12emt_merge_list.$Date_NEW_ARC > o.SUB_MKCMAT_v220_E12x.$Date_NEW_ARC 2>&1
-
-#
-
-#
-# Merge the two LAGEOS and ETALON Cmats now into a single Cmat:
-#
-
-
- rm $MAIN_PATH/INFILES/LE12emt_merge_list.$Date_NEW_ARC
-/bin/sed -e "s/AAAAAA/$ARC/g" -e "s/DDDDDD/$Date_NEW_ARC/g" -e "s/YY/$YY/g" -e "s/LL/$LCMTV/g" -e "s/EE/$ECMTV/g" $MAIN_PATH/INFILES/LE12emt_merge_list.tmplt > $MAIN_PATH/INFILES/LE12emt_merge_list.$Date_NEW_ARC
-
-
-#$SCRIPTS/SUB_MKCMAT_v220 LE 0.25 $YY $CASE . ${LVER}e LE12emt_merge_list.$Date_NEW_ARC > o.SUB_MKCMAT_v220_LE12.$Date_NEW_ARC 2>&1
-
-$SCRIPTS/SUB_MKCMAT_v220 LE 1.00 $YY $CASE . ${LVER}e LE12emt_merge_list.$Date_NEW_ARC > o.SUB_MKCMAT_v220_LE12.$Date_NEW_ARC 2>&1
-
-
- rm $MAIN_PATH/INFILES/LE12emt_merge_list.$Date_NEW_ARC
-/bin/sed -e "s/AAAAAA/$ARC/g" -e "s/DDDDDD/$Date_NEW_ARC/g" -e "s/YY/$YY/g" -e "s/LL/$LCMTVx/g" -e "s/EE/$ECMTVx/g" $MAIN_PATH/INFILES/LE12emt_merge_list.tmplt > $MAIN_PATH/INFILES/LE12emt_merge_list.$Date_NEW_ARC
-
-
-#$SCRIPTS/SUB_MKCMAT_v220 LEx 0.25 $YY $CASE . ${LVER}x LE12emt_merge_list.$Date_NEW_ARC > o.SUB_MKCMAT_v220_LE12x.$Date_NEW_ARC 2>&1
-
-$SCRIPTS/SUB_MKCMAT_v220 LEx 1.00 $YY $CASE . ${LVER}x LE12emt_merge_list.$Date_NEW_ARC > o.SUB_MKCMAT_v220_LE12x.$Date_NEW_ARC 2>&1
-
-
-
-
-
-#
-# At this point we do a LAGEOS+ETALON TRF solution (incremental)
-#
-
-CMAT_VERSION=30
-
-export CMAT_VERSION
-
-SOL=$SOL_E
-
-read GLOBAL_CMAT_OLD < $MAIN_PATH/INFILES/$CASE/CURRENT_GLOBAL.${CMAT_VERSION}_$ARC
-read CURRENT_CMAT_2_ADD < $MAIN_PATH/INFILES/$CASE/CURRENT_LE12_CMAT_NO.${CMAT_VERSION}_$ARC
-
-export GLOBAL_CMAT_OLD CURRENT_CMAT_2_ADD SOL
-
-
-#$SCRIPTS/SUB_TRF_INCRMNTL $SOL $CASE OPS . PPV SOLVE_TRF_INCRMNTL U4staestMinCon > o.SLV_LE12inc 2>&1
-
-
-
-
-
-#
-# At this point we do a LAGEOS+ETALON WEEKLY-TRF solution (Mid-arc referenced)
-#
-
-CMAT_VERSION=31
-
-export CMAT_VERSION
-
-SOL=$SOL_EPP
-
-read CURRENT_CMAT_2_ADD < $MAIN_PATH/INFILES/$CASE/CURRENT_LE12_CMAT_NO.${CMAT_VERSION}_$ARC
-
-export CURRENT_CMAT_2_ADD SOL
-
-$SCRIPTS/SUB_TRF_WEEKLY_PP_BIAS $SOL $CASE OPS . PPV SOLVE_TRF_WEEKLY_2014_180322 NULL > o.SLV_LE12_PP 2>&1
-
-
-# First get the list of biases that were solved-for:
-
-
-
-#
-# Postprocess the LAGEOS+ETALON WEEKLY-TRF solution:
-#
-
-PSOL_NUM=1
-
-$SCRIPTS/POST_PROCESS $SOL $SERVICE PPV $CASE LE12 ${PSOL_NUM} ${SNX_VER} $Date_NEW_ARC $Date_NXT_ARC $Date_MID_ARC $ILRS_AC $WEIGHT > o.POST_PROCESS_LE12_PP 2>&1  
-
-
-# Link the proper EPOCH BLOCK to this solution after removing any old links:
-
-\rm $EPOCH_DIR/${SERVICE}_${SOL}
-ln -s $EPOCH_DIR/${SERVICE}_${ARC}.${LVER}e_${WT}_$SUBSFX $EPOCH_DIR/${SERVICE}_${SOL}
-
-# Save the solution filename for postprocessing and orbit file creation:
-
-SOL_FILE=${SERVICE}_${SOL}_
-
-
-# Read and process the PARM file of this solution:
-
-$SCRIPTS/PARMRDR_OPS_TRF $SOL_FILE PPV $DISK $CASE OPS > o.PARMRDR_OPS_TRF_$SOL_FILE_PPV_$CASE 2>&1 
-
-#
-# At this point you can do a LAGEOS+ETALON Network Check and NEOS EOP solution:
-#
-
-CMAT_VERSION=31
-
-export CMAT_VERSION
-
-SOL=$SOL_EN
-
-read CURRENT_CMAT_2_ADD < $MAIN_PATH/INFILES/$CASE/CURRENT_LE12_CMAT_NO.${CMAT_VERSION}_$ARC
-
-export CURRENT_CMAT_2_ADD SOL
-
-#$SCRIPTS/SUB_TRF_NEOS $SOL $CASE OPS . PPV SOLVE_TRF_WEEKLY NULL > o.SLV_LE12_NEOS 2>&1
-
-
-# First get the list of biases that were solved-for:
-
-
-
-#
-# Postprocess the LAGEOS+ETALON ILRS_NEOS solution:
-#
-
-PSOL_NUM=1
-
-#$SCRIPTS/POST_PROCESS $SOL $SERVICE PPV $CASE LE12NEOS ${PSOL_NUM} ${SNX_VER} $Date_NEW_ARC $Date_NXT_ARC $Date_MID_ARC $ILRS_AC $WEIGHT > o.POST_PROCESS_LE12_NEOS 2>&1  
-#
-
-# Link the proper EPOCH BLOCK to this solution after removing any old links:
-
-\rm $EPOCH_DIR/${SERVICE}_${SOL}
-ln -s $EPOCH_DIR/${SERVICE}_${ARC}.${LVER}e_${WT}_$SUBSFX $EPOCH_DIR/${SERVICE}_${SOL}
-
-
-
-
-#
-#
-#  Make a NEOS submission file:
-#
-#
-
-mkdir -p /${DISK}/PPV/d_base/data/EOP/NEOS/JCET
-
-#$SCRIPTS/MAKE_NEOS_EOP $ARC ${SERVICE}_${SOL_EN}_ ${LVER}e PPV EMT $CASE > o.MAKE_NEOS_EOP_SOL_EN 2>&1
-
-#cat /${DISK}/PPV/products/$CASE/OPS/${SERVICE}_${SOL_EN}_/${ARC}.JCET >> /${DISK}/PPV/d_base/data/EOP/NEOS/JCET/LAGEOS12+ETALON12_REANAL2014
-
-
-
-#---------------------------------------------------
-
-
-#  Done with ETALON  1 & 2
-
-
-#---------------------------------------------------
-
-#+++++++++++++++++++++++++++++++++++++++++++++++++++
-
-#
-#  Mail the file to ECP:
-#
-
-echo "NEW P-SERIES2010 2014 RESULTS FOR ARC: " $ARC > thdr
-cat thdr /${DISK}/PPV/products/$CASE/OPS/${SERVICE}_${SOL_EN}_/${ARC}.JCET > 2mail
-
-#mailx -s NEOS-p epavlis@umbc.edu < 2mail
-#mailx -s NEOS-p_rerun_7105 epavlis@umbc.edu < 2mail
-#mailx -s NEOS-p_v221 magdak@umbc.edu < 2mail
-#mailx -s NEOS-p_rerun_7105 magdak@umbc.edu < 2mail
-#mail Johnson.Thomas@usno.navy.mil < 2mail
-####mail RSG@LOGOS.JPL.NASA.GOV < 2mail
-#mailx -s NEOS-p richard.s.gross@jpl.nasa.gov < 2mail
-
-###mail epavlis@umbc.edu < /${DISK}/PPV/products/$CASE/OPS/${SERVICE}_${SOL_EN}_/${ARC}.JCET 
-###mail Johnson.Thomas@usno.navy.mil < /${DISK}/PPV/products/$CASE/OPS/${SERVICE}_${SOL_EN}_/${ARC}.JCET 
-###mail RSG@LOGOS.JPL.NASA.GOV < /${DISK}/PPV/products/$CASE/OPS/${SERVICE}_${SOL_EN}_/${ARC}.JCET 
-#exit 2222
 #---------------------------------------------------
 
 
@@ -1730,15 +1359,6 @@ rm $MAIN_PATH/INFILES/WEEKLY/CURRENT_LE12_CMAT_NO.31_$ARC
 #rm $MAIN_PATH/INFILES/ILRS_LE12NEOS${Date_NEW_ARC}_fnames.snx  
 #rm $MAIN_PATH/INFILES/ILRS_LE12_OPS${Date_NEW_ARC}_fnames.snx
 
-#exit 2222
-#done < /nobackup/mkuzmicz/INFILES/RR_2005-2008
-#done < /nobackup/mkuzmicz/INFILES/RR_2005-2008_rest2
-#done < /nobackup/mkuzmicz/INFILES/RR_1993-2014
-#done < /nobackup/mkuzmicz/INFILES/RR_1993-2018
-#done < /nobackup/mkuzmicz/INFILES/RR_1993-2018_R3
-#done < /nobackup/mkuzmicz/INFILES/RR_2002_M
-#done < /nobackup/mkuzmicz/INFILES/RR_M
-#done < /nobackup/mkuzmicz/INFILES/RR_M_2
 
 #
 #done < /nobackup/mkuzmicz/INFILES/RR_RUN_1

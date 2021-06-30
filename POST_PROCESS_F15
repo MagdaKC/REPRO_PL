@@ -27,7 +27,7 @@ echo " # "
 
 #MAIN_PATH=/space/users/epavlis
 #SCRIPTS=$MAIN_PATH/scripts/OPS/POST
-#DISK=space/MISSIONS
+#DISK=space/REPRO
 #SERVICE=ILRS
 #
 #export MAIN_PATH SCRIPTS DISK SERVICE
@@ -58,7 +58,7 @@ chmod 664 $MAIN_PATH/INFILES/${PROJ}_${CASE}_fnames.snx
 echo $SP3 > $MAIN_PATH/INFILES/${PROJ}_${CASE}_fnames.sp3
 chmod 664 $MAIN_PATH/INFILES/${PROJ}_${CASE}_fnames.sp3
 
-export STEP CASE SOL SAT PROJ SNX  SP3
+export STEP CASE SOL SAT PROJ SNX  SP3 BGN
 
 
 gzip -S .Z -f /nobackup/mkuzmicz/REPRO/$SAT/pgscov/$STEP/$SUBDIR/${SOL}_${WT}cov
@@ -69,9 +69,9 @@ gzip -S .Z -f /nobackup/mkuzmicz/REPRO/$SAT/punchdout/$STEP/$SUBDIR/${SOL}_${WT}
 
 # Generate BIAS BLOCK:
 
-$SCRIPTS/MAKE_BIAS_LIST $SOL $SAT ${STEP} OPS 4051 we $WT > o.MAKE_BIAS_LIST_4051 2>&1
+$SCRIPTS/MAKE_BIAS_LIST $SOL $SAT ${STEP} OPS 4051 we $WT > o.MAKE_BIAS_LIST_4051.$SOL 2>&1
 
-$SCRIPTS/MAKE_BIAS_LIST $SOL $SAT ${STEP} OPS 4500 we $WT > o.MAKE_BIAS_LIST_4500 2>&1
+$SCRIPTS/MAKE_BIAS_LIST $SOL $SAT ${STEP} OPS 4500 we $WT > o.MAKE_BIAS_LIST_4500.$SOL 2>&1
 
 # Combine all BIAS BLOCKS into one:
 
@@ -81,7 +81,7 @@ cat $MBS/$SUBDIR/${SOL}.4051 $MBS/$SUBDIR/${SOL}.4500 > $MBS/${SOL}
 
 
 
-UN4=$MAIN_PATH/INFILES/INF_OPS_PP_BIAS/unit4_$PROJ/$STEP
+UN4=$MAIN_PATH/INFILES/INF_OPS_PP_BIAS/unit4_$PROJ/$STEP/v${SNX_VER}
 
 # Create appropriate template:
 
@@ -96,7 +96,7 @@ SUBSFX0=${SUBSFX}
 
 elif [ "$SUBSFX" = "L1"  ]; then
 
-SUBSFX0=${SUBSFX}v62
+SUBSFX0=${SUBSFX}v400
 # /usr/xpg4/bin/grep -v -e "^MADRNG       41" -e "^MADRNG       45" -e "^MADRNG       49" -e "^MADRNG      13" $UN4/unit4.IERS_templt > eee000
 
            /bin/grep -v -e "^MADRNG       41" -e "^MADRNG       45" -e "^MADRNG       49" -e "^MADRNG      13" $UN4/unit4.ILRS_templt > eee000
@@ -110,11 +110,12 @@ SUBSFX0=${SUBSFX}
 # /usr/xpg4/bin/grep -v -e "^MADRNG      11" -e "^MADRNG      13" $UN4/unit4.IERS_templt > eee000
 
            /bin/grep -v -e "^MADRNG      11" -e "^MADRNG      13" $UN4/unit4.ILRS_templt > eee000
-  sed -e "s/CCCCC/E    /g" -e "s/TTTTTT/$SUBSFX0/g" eee000 > eee111
+  sed -e "s/SXVR/${vM}/g" -e "s/CCCCC/E    /g" -e "s/TTTTTT/$SUBSFX0/g" eee000 > eee111
 
 fi
 
-sed -e "s/DDDDDD/$MID/g" -e "s/BBBBBB/$BGN/g" -e "s/EEEEEE/$SNX_DATE/g" eee111 > $UN4/unit4.${SOL}
+#sed -e "s/DDDDDD/$MID/g" -e "s/BBBBBB/$BGN/g" -e "s/EEEEEE/$SNX_DATE/g" eee111 > $UN4/unit4.${SOL}
+sed -e "s/SXVR/${vM}/g" -e "s/DDDDDD/$MID/g" -e "s/BBBBBB/$BGN/g" -e "s/EEEEEE/$SNX_DATE/g" eee111 > $UN4/unit4.${SOL}
 
 
 
@@ -123,17 +124,17 @@ REF=$MAIN_PATH/INFILES/fileref_$PROJ/$STEP
 if [ "$SUBSFX" = "L12" -o "$SUBSFX" = "L12NEOS" ]; then
 
 SUBSFX0=${SUBSFX}
-sed -e "s/IIII/$INST/g" -e "s/PPPP/$PROJ/g" -e "s/NNNN/$solN/g" -e "s/MMMM/$vM/g" -e "s/BBBBBB/$BGN/g" -e "s/EEEEEE/$SNX_DATE/g" -e "s/DDDDDD/$MID/g" -e "s/YYMMDD/$BGN/g" $REF/fileref.${PROJ}_LAGEOS_templt > $REF/fileref.${SOL}
+sed -e "s/IIII/$INST/g" -e "s/PPPP/$PROJ/g" -e "s/NNNN/$solN/g" -e "s/MMMM/$vM/g" -e "s/BBBBBB/$BGN/g" -e "s/EEEEEE/$SNX_DATE/g" -e "s/DDDDDD/$MID/g" -e "s/YYMMDD/$BGN/g" $REF/${vM}.fileref.${PROJ}_LAGEOS_templt > $REF/${vM}.fileref.${SOL}
 
 elif [ "$SUBSFX" = "L1" ]; then
 
-SUBSFX0=${SUBSFX}v62
-sed -e "s/IIII/$INST/g" -e "s/PPPP/$PROJ/g" -e "s/NNNN/$solN/g" -e "s/MMMM/$vM/g" -e "s/BBBBBB/$BGN/g" -e "s/EEEEEE/$SNX_DATE/g" -e "s/DDDDDD/$MID/g" -e "s/YYMMDD/$BGN/g" $REF/fileref.${PROJ}_LAGEOS_templt > $REF/fileref.${SOL}
+#SUBSFX0=${SUBSFX}v400
+sed -e "s/IIII/$INST/g" -e "s/PPPP/$PROJ/g" -e "s/NNNN/$solN/g" -e "s/MMMM/$vM/g" -e "s/BBBBBB/$BGN/g" -e "s/EEEEEE/$SNX_DATE/g" -e "s/DDDDDD/$MID/g" -e "s/YYMMDD/$BGN/g" $REF/${vM}.fileref.${PROJ}_LAGEOS_templt > $REF/${vM}.fileref.${SOL}
 
 elif [ "$SUBSFX" = "LE12" -o "$SUBSFX" = "LE12NEOS" ]; then
 
 SUBSFX=${SUBSFX}
-sed -e "s/IIII/$INST/g" -e "s/PPPP/$PROJ/g" -e "s/NNNN/$solN/g" -e "s/MMMM/$vM/g" -e "s/BBBBBB/$BGN/g" -e "s/EEEEEE/$SNX_DATE/g" -e "s/DDDDDD/$MID/g" -e "s/YYMMDD/$BGN/g" $REF/fileref.${PROJ}_LAGEOS+ETALON_templt > $REF/fileref.${SOL}
+sed -e "s/IIII/$INST/g" -e "s/PPPP/$PROJ/g" -e "s/NNNN/$solN/g" -e "s/MMMM/$vM/g" -e "s/BBBBBB/$BGN/g" -e "s/EEEEEE/$SNX_DATE/g" -e "s/DDDDDD/$MID/g" -e "s/YYMMDD/$BGN/g" $REF/${vM}.fileref.${PROJ}_LAGEOS+ETALON_templt > $REF/${vM}.fileref.${SOL}
 
 fi
 
@@ -142,8 +143,7 @@ fi
 
 $SCRIPTS/CULL_SITES ${SOL} $SAT $STEP OPS 
 
-#mkc 210630
-cp $UN4/v${SNX_VER}/unit4.${SOL} xxx000
+cp $UN4/unit4.${SOL} xxx000
 
 while read label lab1 lab2
 do
@@ -153,7 +153,6 @@ do
   mv xxx111 xxx000
 
 done < MATSUP.${SOL}
-
 mv MATSUP.${SOL} $MAIN_PATH/INFILES/MATSUP_${PROJ}/$STEP/MATSUP.${SOL}
 mv xxx000 $UN4/unit4.${SOL}
 

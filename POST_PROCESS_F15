@@ -61,9 +61,9 @@ chmod 664 $MAIN_PATH/INFILES/${PROJ}_${CASE}_fnames.sp3
 export STEP CASE SOL SAT PROJ SNX  SP3
 
 
-compress -f /nobackup/mkuzmicz/REPRO/$SAT/pgscov/$STEP/$SUBDIR/${SOL}_${WT}cov
+gzip -S .Z -f /nobackup/mkuzmicz/REPRO/$SAT/pgscov/$STEP/$SUBDIR/${SOL}_${WT}cov
 
-compress -f /nobackup/mkuzmicz/REPRO/$SAT/punchdout/$STEP/$SUBDIR/${SOL}_${WT}pnc
+gzip -S .Z -f /nobackup/mkuzmicz/REPRO/$SAT/punchdout/$STEP/$SUBDIR/${SOL}_${WT}pnc
 
 
 
@@ -81,7 +81,7 @@ cat $MBS/$SUBDIR/${SOL}.4051 $MBS/$SUBDIR/${SOL}.4500 > $MBS/${SOL}
 
 
 
-UN4=$MAIN_PATH/INFILES/INF_PP_BIAS/unit4_$PROJ/$STEP
+UN4=$MAIN_PATH/INFILES/INF_OPS_PP_BIAS/unit4_$PROJ/$STEP
 
 # Create appropriate template:
 
@@ -142,7 +142,8 @@ fi
 
 $SCRIPTS/CULL_SITES ${SOL} $SAT $STEP OPS 
 
-cp $UN4/unit4.${SOL} xxx000
+#mkc 210630
+cp $UN4/v${SNX_VER}/unit4.${SOL} xxx000
 
 while read label lab1 lab2
 do

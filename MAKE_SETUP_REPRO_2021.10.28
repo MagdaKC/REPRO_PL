@@ -1,0 +1,185 @@
+#!/bin/ksh
+#
+
+set -xv
+
+#  MAKE_SETUP_REPRO_2021.04.15                  
+#
+
+disk=/nobackup/mkuzmicz/REPRO/
+disk2=/nobackup/mkuzmicz/MISSIONS/
+
+SAT=$1
+
+sv=$2
+
+RUNfile=${3:-RR_test_ecp1}
+
+STAGE=WEEKLY
+
+
+while read A1 A2 A3 A4 A5 A6 A7 A8 A9 A10 A11 A12
+do
+
+cd /nobackup/mkuzmicz/tmp/magda
+wkTmp=$$
+mkdir ${CASE}${wkTmp}$A3
+cd ${CASE}${wkTmp}$A3
+TT=${CASE}${wkTmp}$A3
+export TT
+
+ARC=$A8
+Date_NEW_ARC=$A7
+Date_NXT_ARC=$A11
+
+
+cat /${disk}/$SAT/d_base/trnd/DR/${STAGE}/v70/${ARC} >t0   # You will need to start from the LAST DR1 run punch in order to have the best elements, etc.
+
+
+#                                                                                                             We are using new models, so we will use +03 instead of +02 here!
+
+sed "s/EDIT                     ......................................................./EDIT                     3.5000000000000D+00 1.00000000D+03 0.000000D+00 0.0D+00/g"  t0 > t11
+#cp t0 t11
+
+# make a few spot checks in the runs which we start from (v72) and see if these SOLRADs and STEP size were already changed  !!!
+
+ sed "s/SOLRAD 0  0      7603901 ...................                1.000000D-04/SOLRAD 0  0      7603901 1.1250000000000D+00                1.000000D-04/g"  t11 > t10
+ sed "s/SOLRAD 0  0      9207002 ...................                1.000000D-04/SOLRAD 0  0      9207002 1.0950000000000D+00                1.000000D-04/g"  t11 > t10
+
+ sed "s/STEP   ..........76039.1.................... 0.00000000D+00 0.000000D+00/STEP   0 011 0  07603901 0.6000000000000D+02 0.00000000D+00 0.000000D+00/g"  t10 > t1
+
+
+grep -v EMATRX t1 > t2
+
+sed -e "s/REFSYS..../REFSYS1264/g" t2 > t3
+
+
+#   These files are all now consolidated into a single file:    /nobackup/mkuzmicz/REPRO/d_base/bias/WEEKLY/MODELED_MBIAS_2B_APPLIED_210415
+
+## cp  /${disk}/d_base/bias/WEEKLY/RANGE_MBIAS_210302_CARDS_L1    MBIAS_SIG0    
+## cat /${disk}/d_base/bias/WEEKLY/RANGE_MBIAS_210302_CARDS_L2 >> MBIAS_SIG0
+## cat /${disk}/d_base/bias/WEEKLY/RANGE_MBIAS_210302_CARDS_E1 >> MBIAS_SIG0
+## cat /${disk}/d_base/bias/WEEKLY/RANGE_MBIAS_210302_CARDS_E2 >> MBIAS_SIG0
+## cat /${disk}/d_base/bias/WEEKLY/RANGE_MBIAS_PRE_1993_210415_CARDS >> MBIAS_SIG0
+## cat /${disk}/d_base/bias/WEEKLY/TIME_MBIAS_CARDS_T_210129   >> MBIAS_SIG0
+## cat /${disk}/d_base/bias/WEEKLY/TIME_MBIAS_CARDS_U_210129   >> MBIAS_SIG0
+## cat /${disk}/d_base/bias/WEEKLY/mkMBIAS300_TB_T2L2_2_APPLY_190319.190319  >> MBIAS_SIG0    #  Now MBIAS_SIG0 contains all the new T2L2 time bias cards with 0 sigma
+
+## /nobackup/mkuzmicz/REPRO/d_base/bias/WEEKLY
+## -rwxrwxr-x 1 epavlis  s0860 236682 Apr 15 14:21 MODELED_MBIAS_2B_APPLIED_210415
+
+cp /nobackup/mkuzmicz/REPRO/d_base/bias/WEEKLY/MODELED_MBIAS_2B_APPLIED_210415 MBIAS_SIG0
+
+cat /nobackup/mkuzmicz/REPRO/d_base/bias/WEEKLY/EST_RANGE_MBIAS_210128_CARDS >> MBIAS_SIG0
+
+
+# Collect any SELECT and DELETE cards into appropriate subset files:
+
+grep "SELECT" t0 > SELECT_CARD
+
+grep "DELETE" t0 > DELETE_CARD
+
+
+# From old setup collect all cards excluding those below and save them in "t4":
+
+grep -v -e "MBIAS" -e "OBSCOR" -e "DELETE" -e "ENDARC"  -e "SIGMA" -e "SELECT" t3 > t4
+
+
+
+# Find DATA card and save all cards from the 1st to the one just before this DATA card in "t5":
+
+arcline1=`sed -n "/DATA/=" t4 `
+arcline2=` expr $arcline1 - 1 `
+
+sed -n "1,${arcline2}p" t4 > t5
+
+
+
+# We will no longer use a MASTER with ALL stations for all times!
+
+#210310
+
+## cat /${disk}/d_base/bias/WEEKLY/MASTER.ALL_SITES_51MBIAS.su@0.75D+02_2021.03.10  > m0    
+
+
+# Instead we have arc-specific files with the appropriate MBIAS ONLY for the specific arc, 
+# for all satellites and a generic time interval:
+
+#2021.10.28 read README cp /nobackup/mkuzmicz/REPRO/d_base/bias/WEEKLY/ARC_SPECIFIC/$ARC m0
+cp /nobackup/mkuzmicz/REPRO/d_base/bias/WEEKLY/ARC_SPECIFIC/MBIAS_2021 m0
+
+sed -e "s/600101000000.00291231000000/${Date_NEW_ARC}000000.00${Date_NXT_ARC}000000/" m0 > m1    #  This should be done ONLY for the 51 MBIAS, NOT for the MBIAS300 !!!
+
+cat m1 >> MBIAS_SIG0
+
+
+# At this point we have included ALL MBIAS commands in the new setup and we put them at the end of the file t5:
+
+cat MBIAS_SIG0 >> t5
+
+
+# Now we append the rest of the commands from the old setup from "DATA" to the end:
+
+sed -n "${arcline1},\$p" t4 >> t5
+
+arcline1=`sed -n "/DATA/=" t5 `
+arcline2=` expr $arcline1 - 1 `
+arcline3=` expr $arcline1 + 1 `
+
+sed -n "1,${arcline1}p" t5 > t6
+
+#OBSCOR
+
+# We now need to use a specific OBSCOR file for EACH arc!  No longer MASTER files!!!
+# So the new way for adding the OBSCORs should be something like this:
+
+cat /nobackup/mkuzmicz/INFILES/ALL_STATIONS_200615/OBSCOR/200615/OBSCOR/DEFAULT_JCET_mean >> t6
+
+
+#   Where "ARC" is the arcname according to our convention !!!
+
+cat /nobackup/mkuzmicz/INFILES/ALL_STATIONS_200615/OBSCOR/200615/OBSCOR/${ARC}_OBSCOR >> t6      
+
+
+sed -n "${arcline3},\$p" t5 >> t6
+sed -n "${arcline1},\$p" t5 > t66
+
+#SIGMA
+
+cat /nobackup/mkuzmicz/MISSIONS/d_base/sgms/MASTER_SIGMA.current >> t6
+
+cat SELECT_CARD >> t6
+
+#DELETE
+
+cat /nobackup/mkuzmicz/INFILES/DELETE_CRADS_4_REPRO_20210311/ALL_STAT_2_DELETE_2021_ecp2 >> t6
+cat /nobackup/mkuzmicz/INFILES/DELETE_CRADS_4_REPRO_20210311/ALL_STAT_2_DELETE_${sv}_20210311_mkc_s2 >> t6
+
+#cat /nobackup/mkuzmicz/INFILES/ALL_STAT_2_DELETE_${sv}_20191211_mkc_s >> t6
+#cat /nobackup/mkuzmicz/INFILES/ALL_STAT_2_DELETE_${sv}_20210310_mkc_s >> t6
+
+
+# What about the DELETE_CARD that you created above? Shouldn't that be included? ???        
+
+cat DELETE_CARD >> t6       
+
+echo "ENDARC">> t6
+
+
+# This makes sure we did not have a DELETE for 7394 in the previous setup, since now we do want the station in the solution!
+
+grep -v "DELETE73942601 51" t6 > t7
+
+
+#   The final setup is saved in this directory initially and after the first run, setups will be directed under "v400":
+
+cp t7  /${disk}/$SAT/d_base/trnd/DR/${STAGE}/v400_0/${ARC}       
+
+#exit 2222
+
+done < /nobackup/mkuzmicz/INFILES/$RUNfile
+#done < /nobackup/mkuzmicz/INFILES/RR_test
+#done < /nobackup/mkuzmicz/INFILES/RR_2021
+
+exit 0
+#
